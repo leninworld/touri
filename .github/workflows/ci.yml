@@ -156,7 +156,7 @@ jobs:
     env:
       TOURI_DOCTOR_SKIP_PROVIDER_PROBES: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-bun
         with:
           bun-version: 1.4.3
@@ -195,7 +195,7 @@ jobs:
         run: bunx playwright test test/e2e/local-file-links.spec.ts --workers=1 --output test-results/local-file-links
       - name: Keep synthetic performance evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: composer-performance
           path: |
@@ -242,7 +242,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-bun
         with:
           bun-version: 1.4.3
