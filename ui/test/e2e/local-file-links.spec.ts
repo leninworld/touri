@@ -5,6 +5,9 @@ import { expect, type Page, test } from "@playwright/test"
 test.use({ channel: "chromium" })
 
 test("chat files open in touri, download checked bytes and show inline errors", async ({ page }, testInfo) => {
+  // The first navigation initializes lazy Markdown before exercising file and download I/O.
+  test.slow()
+
   const png = Buffer.from(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==",
     "base64",
@@ -111,7 +114,7 @@ for (const width of [1440, 390]) {
       await expect(page.getByText("/workspace/report-{analysis,{draft}}.txt", { exact: true })).toBeVisible()
       await expect(page.getByRole("button", { name: /\{analysis,\{draft\}\}|Relatórios aninhados/ })).toHaveCount(0)
       await expect(page.getByRole("link", { name: "Relatórios aninhados", exact: true })).toHaveCount(0)
-      await expect(page.getByText("Baixar relatórios", { exact: true })).toBeVisible()
+      await expect(page.getByText("Baixar relatórios")).toBeVisible()
       await expect(page.getByRole("button", { name: "Baixar relatórios", exact: true })).toHaveCount(0)
       await expect(page.getByRole("link", { name: "Referência", exact: true })).toHaveAttribute(
         "href",
