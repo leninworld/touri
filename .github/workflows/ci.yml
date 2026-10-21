@@ -190,6 +190,9 @@ jobs:
       - name: Check long-conversation typing
         working-directory: ui
         run: bunx playwright test test/e2e/composer-performance.spec.ts test/e2e/streaming-memory.spec.ts --workers=1
+      - name: Check local file citations and previews
+        working-directory: ui
+        run: bunx playwright test test/e2e/local-file-links.spec.ts --workers=1 --output test-results/local-file-links
       - name: Keep synthetic performance evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -201,6 +204,9 @@ jobs:
             ui/test-results/**/streaming-memory.json
             ui/test-results/**/after-streaming.png
             ui/test-results/**/after-completed.png
+            ui/test-results/local-file-links/**/brace-files-*.png
+            ui/test-results/local-file-links/**/generated-image-and-file-links.png
+            ui/test-results/local-file-links/**/local-file-preview.png
           if-no-files-found: ignore
           retention-days: 7
 
@@ -234,7 +240,7 @@ jobs:
 
   api-models:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-bun
