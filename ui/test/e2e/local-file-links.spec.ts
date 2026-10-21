@@ -63,7 +63,7 @@ test("chat files open in touri, download checked bytes and show inline errors", 
 
 const useFileResponses = async (page: Page) => {
   const reads: string[] = []
-  await page.route("**/api/v1/bots/*/files/content?*", async (route) => {
+  await page.route(/\/api\/v1\/bots\/[^/]+\/(?:files\/content|images)\?/, async (route) => {
     const path = new URL(route.request().url()).searchParams.get("path") ?? ""
     reads.push(path)
     const markdown = path === "/workspace/report.md"
@@ -108,6 +108,16 @@ for (const width of [1440, 390]) {
 
       await expect(page.getByText("/workspace/report-{analysis,draft}.txt", { exact: true })).toBeVisible()
       await expect(page.getByRole("button", { name: /\{analysis,draft\}|\{1\.\.3\}/ })).toHaveCount(0)
+      await expect(page.getByText("/workspace/report-{analysis,{draft}}.txt", { exact: true })).toBeVisible()
+      await expect(page.getByRole("button", { name: /\{analysis,\{draft\}\}|Relatórios aninhados/ })).toHaveCount(0)
+      await expect(page.getByRole("link", { name: "Relatórios aninhados", exact: true })).toHaveCount(0)
+      await expect(page.getByText("Baixar relatórios", { exact: true })).toBeVisible()
+      await expect(page.getByRole("button", { name: "Baixar relatórios", exact: true })).toHaveCount(0)
+      await expect(page.getByRole("link", { name: "Referência", exact: true })).toHaveAttribute(
+        "href",
+        "https://example.test/report.md",
+      )
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
       expect(reads).toEqual([])
       await page.getByRole("button", { name: "Arquivo ausente", exact: true }).click()
       await expect(page.getByRole("alert")).toHaveText("Arquivo não encontrado.")

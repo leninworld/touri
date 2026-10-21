@@ -40,7 +40,7 @@ if (root && ["files", "brace-files"].includes(params.get("view") ?? "")) {
         evidence={evidence}
         content={
           params.get("view") === "brace-files"
-            ? "Relatórios: `/workspace/report-{analysis,draft}.txt` e /workspace/report-{1..3}.md.\n\n[report.md](/workspace/report.md) · [report.txt](/workspace/report.txt)\n\n[Arquivo ausente](/workspace/missing.txt) · [Bot removido](/workspace/removed-bot.txt)"
+            ? "Relatórios: `/workspace/report-{analysis,draft}.txt` e /workspace/report-{1..3}.md.\n\nAninhados: `/workspace/report-{analysis,{draft}}.txt` e [Relatórios aninhados](/workspace/report-{{analysis},draft}.txt).\n\n[Baixar relatórios](/workspace/report-{analysis,draft}.png) · [Referência](https://example.test/report.md)\n\n[report.md](/workspace/report.md) · [report.txt](/workspace/report.txt)\n\n[Arquivo ausente](/workspace/missing.txt) · [Bot removido](/workspace/removed-bot.txt)"
             : "Salvo em [notas.md](/workspace/notas.md).\n\n[Arquivo removido](/workspace/missing.md) · [Sem acesso](/outside/private.txt)\n\n[Baixar PNG](/output/post.png) · Vou criar `planned.png`."
         }
       />

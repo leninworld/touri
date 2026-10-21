@@ -18,9 +18,17 @@ export const localFilePath = (href: string): string | null => {
 
 /** Shell alternatives name several possible files, not one literal preview target. */
 export const hasShellBraceAlternatives = (path: string): boolean => {
-  for (const match of path.matchAll(/\{([^{}]*)\}/g)) {
-    const body = match[1] ?? ""
-    if (body.includes(",") || /^(?:[+-]?\d+\.\.[+-]?\d+|[a-zA-Z]\.\.[a-zA-Z])(?:\.\.[+-]?\d+)?$/.test(body)) return true
+  if (/\{(?:[+-]?\d+\.\.[+-]?\d+|[a-zA-Z]\.\.[a-zA-Z])(?:\.\.[+-]?\d+)?\}/.test(path)) return true
+
+  // Local depth counters recognize nested alternatives in one pass without expanding paths.
+  let depth = 0
+  let commaDepth = 0
+  for (const [marker] of path.matchAll(/[{},]/g)) {
+    if (marker === "{") depth += 1
+    if (marker === "," && depth > 0) commaDepth = depth
+    if (marker !== "}" || depth === 0) continue
+    if (commaDepth === depth) return true
+    depth -= 1
   }
   return false
 }

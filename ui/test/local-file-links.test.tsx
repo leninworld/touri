@@ -146,6 +146,11 @@ describe("local files in chat Markdown", () => {
     "`/workspace/report-{a..c}.txt`",
     "`/workspace/{analysis,draft}/report.txt`",
     "`/workspace/report-%7Banalysis%2Cdraft%7D.txt`",
+    "`/workspace/report-{analysis,{draft}}.txt`",
+    "Read /workspace/report-{{analysis},draft}.txt.",
+    "[reports](/workspace/report-{analysis,{{draft}}}.txt)",
+    "[reports](/workspace/report-{analysis,draft}.png)",
+    "[Download reports](/workspace/report-{1..3}.png)",
   ])("keeps shell-brace citations inert: %s", async (content) => {
     const { evidence, request } = fixture(async () => ({
       name: "unused.txt",
@@ -155,9 +160,10 @@ describe("local files in chat Markdown", () => {
 
     render(<MarkdownContent content={content} evidence={evidence} />)
 
-    await screen.findByText(content.startsWith("[reports]") ? "reports" : /workspace/)
+    await screen.findByText(content.startsWith("[") ? /reports/ : /workspace/)
     expect(document.querySelector(".local-file-link")).toBeNull()
     expect(document.querySelector("a[href]")).toBeNull()
+    expect(screen.queryByRole("button")).toBeNull()
     expect(request).not.toHaveBeenCalled()
   })
 
@@ -165,6 +171,8 @@ describe("local files in chat Markdown", () => {
     { content: "`/workspace/report-{draft}.txt`", path: "/workspace/report-{draft}.txt" },
     { content: "Read /workspace/{draft}/report.txt.", path: "/workspace/{draft}/report.txt" },
     { content: "Read /workspace/report.txt.", path: "/workspace/report.txt" },
+    { content: "`/workspace/report-{{draft}}.txt`", path: "/workspace/report-{{draft}}.txt" },
+    { content: "`/workspace/{analysis},report-{draft}.txt`", path: "/workspace/{analysis},report-{draft}.txt" },
   ])("keeps a literal path clickable: $content", async ({ content, path }) => {
     const { evidence, request } = fixture(async () => ({
       name: "report.txt",
